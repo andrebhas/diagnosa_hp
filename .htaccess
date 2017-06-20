@@ -1,0 +1,38 @@
+<IfModule mod_headers.c>
+    <FilesMatch "\.(eot|font.css|otf|ttc|ttf|woff)$">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
+</IfModule>
+<IfModule mod_mime.c>
+# Web fonts
+AddType application/font-woff woff
+AddType application/vnd.ms-fontobject eot
+
+# Browsers usually ignore the font MIME types and sniff the content,
+# however, Chrome shows a warning if other MIME types are used for the
+# following fonts.
+AddType application/x-font-ttf ttc ttf
+AddType font/opentype otf
+
+# Make SVGZ fonts work on iPad:
+# https://twitter.com/FontSquirrel/status/14855840545
+AddType     image/svg+xml svg svgz
+AddEncoding gzip svgz
+
+</IfModule>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteCond %{REQUEST_URI} ^system.*
+    RewriteRule ^(.*)$ /index.php?/$1 [L]
+
+    RewriteCond %{REQUEST_URI} ^application.*
+    RewriteRule ^(.*)$ /index.php?/$1 [L]
+
+    RewriteCond %{REQUEST_URI} ^asset.*
+    RewriteRule ^(.*)$ /index.php?/$1 [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
